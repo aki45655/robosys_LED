@@ -39,7 +39,7 @@ static int __init init_mod(void)
 {
 	int retval;
 
-	gpio_base = ioremap_nocacha(0x3f200000, 0xA0);
+	gpio_base = ioremap_nocache(0x3f200000, 0xA0);
 	const u32 led = 25;
 	const u32 index  = led/10;
 	const u32 shift = (led%10)*3;
@@ -49,7 +49,7 @@ static int __init init_mod(void)
 
 	retval = alloc_chrdev_region(&dev, 0, 1, "myled");
 	if(retval < 0)
-		printk(KERN_EER "dlloc_chrdev_region.\n");
+		printk(KERN_ERR "dlloc_chrdev_region.\n");
 
 	
 	printk(KERN_INFO "%s is loaded. major:%d\n",__FILE__,MAJOR(dev));
@@ -63,10 +63,10 @@ static int __init init_mod(void)
 	}
 	cls = class_create(THIS_MODULE,"myled");
 	if(IS_ERR(cls)){
-		printk(KERN_EER "class_create failed.");
+		printk(KERN_ERR "class_create failed.");
 		return PTR_ERR(cls);
 	}
-	device_create(cls, NULL, dev, NULL, "myled%d", MIMOR(dev));
+	device_create(cls, NULL, dev, NULL, "myled%d", MINOR(dev));
 	return 0;
 }
 
